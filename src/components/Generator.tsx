@@ -129,17 +129,17 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
   console.log(`Wallet Account: ${wallet.publicKey?.toBase58()}`);
 
   const umi = createUmi(connection)
-  .use(mplTokenMetadata())
-  .use(mplCandyMachine())
-  // Register Wallet Adapter to Umi
-  .use(walletAdapterIdentity(wallet));
+    .use(mplTokenMetadata())
+    .use(mplCandyMachine())
+    // Register Wallet Adapter to Umi
+    .use(walletAdapterIdentity(wallet));
 
-    // Specify metadata for the token
-    const metadata = {
-      name: "aatToken",
-      symbol: "aat",
-      uri: "https://res.cloudinary.com/db9aqguwu/raw/upload/v1711354850/aatToken_kbeit2.json",
-    };  
+  // Specify metadata for the token
+  const metadata = {
+    name: "aatToken",
+    symbol: "aat",
+    uri: "https://res.cloudinary.com/db9aqguwu/raw/upload/v1711354850/aatToken_kbeit2.json",
+  };
 
   async function TokenGenerator() {
     // Create and mint the token
@@ -163,7 +163,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
       .catch((error) => {
         console.error("Error minting token:", error);
       });
-  };
+  }
 
   return (
     <div className="space-y-10 divide-y divide-gray-900/10 p-10">
@@ -176,8 +176,8 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
             Uncle Ringo has been a household name since 1984 and has organized
             countless carnivals, fun-fairs, theme parties, product launches,
             fund-raising charities, school events. We take pride in being
-            Singapore's longest-standing and leading provider of carnivals and
-            family entertainment.
+            Singapore&apos;s longest-standing and leading provider of carnivals
+            and family entertainment.
           </p>
         </div>
 

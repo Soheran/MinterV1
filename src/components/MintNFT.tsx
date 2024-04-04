@@ -37,6 +37,7 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 interface MintPageProps {
   secretKey: string | undefined;
@@ -79,8 +80,12 @@ function classNames(...classes: (string | boolean | undefined)[]) {
 export default function NFTminting({ secretKey }: MintPageProps) {
   // Update env for this
   // Change this to yours
-  const collectionMintAddress = process.env.CollectionMintAddress || "HX2g3DNCJDjX1hWqY8CmDksqGKsNuECn4M1ryZp7RpKZ"
-  const candyMachineAddress = process.env.CandyMachineAddress || "69N6iWdsSjdsFAxidrEAVAq6G4gZCfpoPDAfcFuchDwb"
+  const collectionMintAddress =
+    process.env.CollectionMintAddress ||
+    "HX2g3DNCJDjX1hWqY8CmDksqGKsNuECn4M1ryZp7RpKZ";
+  const candyMachineAddress =
+    process.env.CandyMachineAddress ||
+    "69N6iWdsSjdsFAxidrEAVAq6G4gZCfpoPDAfcFuchDwb";
 
   const [isOpen, setIsOpen] = useState(false);
   const [assetData, setAssetData] = useState<DigitalAsset | null>(null);
@@ -293,7 +298,7 @@ export default function NFTminting({ secretKey }: MintPageProps) {
             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
               {product.images.map((image) => (
                 <Tab.Panel key={image.id}>
-                  <img
+                  <Image
                     src={image.src}
                     alt={image.alt}
                     className="h-full w-full object-cover object-center sm:rounded-lg"

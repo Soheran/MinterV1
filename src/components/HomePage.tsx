@@ -8,8 +8,8 @@ export default function HomePage() {
             Uncle Ringo has been a household name since 1984 and has organized
             countless carnivals, fun-fairs, theme parties, product launches,
             fund-raising charities, school events. We take pride in being
-            Singapore's longest-standing and leading provider of carnivals and
-            family entertainment.
+            Singapore&apos;s longest-standing and leading provider of carnivals
+            and family entertainment.
           </p>
         </div>
       </div>

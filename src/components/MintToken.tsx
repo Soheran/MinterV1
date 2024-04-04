@@ -18,7 +18,7 @@ import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 interface MintPageProps {
   secretKey: string | undefined;
 }
-    
+
 const stats = [
   { label: "Assets under holding", value: "$119 trillion" },
   { label: "New users annually", value: "46,000" },
@@ -144,7 +144,7 @@ export default function MintToken({ secretKey }: MintPageProps) {
     const fetchBalances = async () => {
       try {
         if (!wallet.publicKey || !wallet.signTransaction) {
-          throw new Error('Wallet not connected');
+          throw new Error("Wallet not connected");
         }
 
         // Fetch total supply
@@ -154,20 +154,24 @@ export default function MintToken({ secretKey }: MintPageProps) {
         setTotalSupply(supplyNumber);
 
         // Fetch user's balance
-        const associatedAccount = await getAssociatedTokenAddress(tokenMintPublicKey, wallet.publicKey);
-        const associatedAccountInfo = await connection.getTokenAccountBalance(associatedAccount);
+        const associatedAccount = await getAssociatedTokenAddress(
+          tokenMintPublicKey,
+          wallet.publicKey
+        );
+        const associatedAccountInfo = await connection.getTokenAccountBalance(
+          associatedAccount
+        );
         const tokenCountString = associatedAccountInfo.value.amount;
         const tokenCount = Number(tokenCountString);
         const tokenNumber = Number(tokenCount / numberPerToken);
         setUserBalance(tokenNumber);
       } catch (error) {
-        console.error('Error fetching balances:', error);
+        console.error("Error fetching balances:", error);
       }
     };
 
     fetchBalances();
   }, [connection, wallet, tokenMintPublicKey, numberPerToken]);
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputVal = parseInt(e.target.value);
@@ -187,8 +191,8 @@ export default function MintToken({ secretKey }: MintPageProps) {
                 Uncle Ringo has been a household name since 1984 and has
                 organized countless carnivals, fun-fairs, theme parties, product
                 launches, fund-raising charities, school events. We take pride
-                in being Singappore's longest-standing and leading provider of
-                carnivals and family entertainment.
+                in being Singappore&apos;s longest-standing and leading provider
+                of carnivals and family entertainment.
               </p>
               <div>
                 <input

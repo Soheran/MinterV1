@@ -22,6 +22,7 @@ import Decryption from "./Decryption";
 // import Encryption from "./Encryption";
 import MintNFT from "./MintNFT";
 import HomePage from "./HomePage";
+import Image from "next/image";
 
 interface MintPageProps {
   secretKey: string | undefined;
@@ -69,7 +70,7 @@ const WalletConnect: React.FC<MintPageProps> = ({ secretKey }) => {
                 <div className="flex lg:flex-1">
                   <a href="#" className="-m-1.5 p-1.5">
                     <span className="sr-only">Uncle Ringo</span>
-                    <img
+                    <Image
                       className="h-8 w-auto"
                       src="https://scontent.fsin11-1.fna.fbcdn.net/v/t39.30808-6/327161498_1281712586109510_9027727457607388738_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=Pe_sdZnaRwYAX8jn-2G&_nc_ht=scontent.fsin11-1.fna&oh=00_AfAG9p782eBGGSYUM7A35cdtjwFXLXeJiV4q7stfJdlBqw&oe=66116B82"
                       alt=""
@@ -119,7 +120,7 @@ const WalletConnect: React.FC<MintPageProps> = ({ secretKey }) => {
                   <div className="flex items-center justify-between">
                     <a href="#" className="-m-1.5 p-1.5">
                       <span className="sr-only">Uncle Ringo</span>
-                      <img
+                      <Image
                         className="h-8 w-auto"
                         src="https://scontent.fsin11-1.fna.fbcdn.net/v/t39.30808-6/327161498_1281712586109510_9027727457607388738_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=Pe_sdZnaRwYAX8jn-2G&_nc_ht=scontent.fsin11-1.fna&oh=00_AfAG9p782eBGGSYUM7A35cdtjwFXLXeJiV4q7stfJdlBqw&oe=66116B82"
                         alt=""
@@ -163,12 +164,12 @@ const WalletConnect: React.FC<MintPageProps> = ({ secretKey }) => {
               </Dialog>
               {/* Render corresponding components based on activeTab */}
               {activeTab === "HomePage" && <HomePage />}
-              {activeTab === "Generator" && <Generator secretKey={secretKey}/>}
+              {activeTab === "Generator" && <Generator secretKey={secretKey} />}
               {activeTab === "Mint Token" && (
                 <MintToken secretKey={secretKey} />
               )}
               {/* {activeTab === "NFT Generator"} */}
-              {activeTab === "Mint NFT" && <MintNFT secretKey={secretKey}/>}
+              {activeTab === "Mint NFT" && <MintNFT secretKey={secretKey} />}
               {/* {activeTab === "Encryption" && <Encryption />} */}
               {activeTab === "Decryption" && <Decryption />}
             </header>

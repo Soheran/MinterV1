@@ -32,6 +32,7 @@ import { Keypair } from "@solana/web3.js";
 import { useState } from "react";
 import Modal from "react-modal";
 import "./styles.css";
+import Image from "next/image";
 
 function NFTminting({ secretKey }: MintPageProps) {
   // Change this to yours
@@ -284,7 +285,7 @@ function NFTminting({ secretKey }: MintPageProps) {
               )}
               <div style={{ textAlign: "center" }}>
                 {imageUri && (
-                  <img
+                  <Image
                     src={imageUri}
                     alt="NFT Image"
                     style={{ display: "inline-block" }}
