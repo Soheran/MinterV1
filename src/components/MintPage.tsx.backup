@@ -1,0 +1,217 @@
+// "use client";
+// import { useState } from "react";
+// import { useWallet } from "@solana/wallet-adapter-react";
+// import MintToken from "./MintToken";
+// import TokenGen from "./TokenGen";
+// import Decrypt from "./Decrypt";
+// import Encrypt from "./Encrypt";
+
+// interface MintPageProps {
+//   secretKey: string | undefined;
+// }
+
+// function MintPage({ secretKey }: MintPageProps) {
+//   const wallet = useWallet();
+//   const [activeTab, setActiveTab] = useState("tokenGen");
+
+//   const handleTabChange = (tab: string) => {
+//     setActiveTab(tab);
+//   };
+
+//   if (!wallet.publicKey) {
+//     return <div>Connecting wallet...</div>;
+//   } 
+
+//   return (
+//     <>
+//       <div>
+//         <div>
+//           <button
+//             onClick={() => handleTabChange("tokenGen")}
+//             style={{
+//               backgroundColor: activeTab === "tokenGen" ? "#2c8543" : "#1a1a1a",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Create Token
+//           </button>
+//           <button
+//             onClick={() => handleTabChange("token")}
+//             style={{
+//               backgroundColor: activeTab === "token" ? "#2c8543" : "#1a1a1a",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Mint Token
+//           </button>
+//           <button
+//             onClick={() => handleTabChange("nft")}
+//             style={{
+//               backgroundColor: activeTab === "nft" ? "#2c8543" : "#1a1a1a",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Mint NFT
+//           </button>
+//           <button
+//             onClick={() => handleTabChange("encryption")}
+//             style={{
+//               backgroundColor:
+//                 activeTab === "encryption" ? "#2c8543" : "#1a1a1a",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Encryption
+//           </button>
+//           <button
+//             onClick={() => handleTabChange("decryption")}
+//             style={{
+//               backgroundColor:
+//                 activeTab === "decryption" ? "#2c8543" : "#1a1a1a",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Decryption
+//           </button>
+//         </div>
+//         <div className="p-5">
+//           {activeTab === "tokenGen" && <TokenGen />}
+//           {activeTab === "token" && <MintToken secretKey={secretKey} />}
+//           {activeTab === "nft"}
+//           {activeTab === "encryption" && <Encrypt />}
+//           {activeTab === "decryption" && <Decrypt />}
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default MintPage;
+
+"use client";
+import { useState } from 'react'
+import { Dialog } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useWallet } from "@solana/wallet-adapter-react";
+import MintToken from "./MintToken";
+import TokenGen from "./TokenGen";
+import Decrypt from "./Decrypt";
+import Encrypt from "./Encrypt";
+
+interface MintPageProps {
+  secretKey: string | undefined;
+}
+
+const MintPage: React.FC<MintPageProps> = ({ secretKey }) => {
+  const wallet = useWallet();
+  if (!wallet.publicKey) {
+  return <div>Connecting wallet...</div>;
+} 
+
+  const [activeTab, setActiveTab] = useState("Token Generator");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const handleItemClick = (itemName: string) => {
+    setActiveTab(itemName);
+    setMobileMenuOpen(false);
+  };
+
+  const navigation = [
+    { name: 'Token Generator', onClick: () => handleItemClick('Token Generator') },
+    { name: 'Mint Token', onClick: () => handleItemClick('Mint Token') },
+    { name: 'NFT Generator', onClick: () => handleItemClick('NFT Generator') },
+    { name: 'Mint NFT', onClick: () => handleItemClick('Mint NFT') },
+    { name: 'Encryption', onClick: () => handleItemClick('Encryption') },
+    { name: 'Decryption', onClick: () => handleItemClick('Decryption') },
+  ];
+
+  return (
+    <header className="bg-white">
+      <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <div className="flex lg:flex-1">
+          <a href="#" className="-m-1.5 p-1.5">
+            <span className="sr-only">Uncle Ringo</span>
+            <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+          </a>
+        </div>
+        <div className="flex lg:hidden">
+          <button
+            type="button"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <span className="sr-only">Open main menu</span>
+            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="hidden lg:flex lg:gap-x-12">
+          {navigation.map((item, index) => (
+            <button key={index} className={`text-sm font-semibold leading-6 text-gray-900 hover:text-red-500 ${activeTab === item.name ? 'text-red-500' : ''}`} onClick={item.onClick}>
+              {item.name}
+            </button>
+          ))}
+        </div>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+            Log in <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </nav>
+      <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+        <div className="fixed inset-0 z-10" />
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
+            <a href="#" className="-m-1.5 p-1.5">
+              <span className="sr-only">Uncle Ringo</span>
+              <img
+                className="h-8 w-auto"
+                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                alt=""
+              />
+            </a>
+            <button
+              type="button"
+              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="sr-only">Close menu</span>
+              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                {navigation.map((item, index) => (
+                  <button key={index} className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-red-500 ${activeTab === item.name ? 'text-red-500' : ''}`} onClick={item.onClick}>
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+              <div className="py-6">
+                <a
+                  href="#"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Log in
+                </a>
+              </div>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+      {/* Render corresponding components based on activeTab */}
+      {activeTab === "Token Generator" && <TokenGen />}
+      {activeTab === "Mint Token" && <MintToken secretKey={secretKey} />}
+      {activeTab === "NFT Generator"}
+      {activeTab === "Mint NFT"}
+      {activeTab === "Encryption" && <Encrypt />}
+      {activeTab === "Decryption" && <Decrypt />}
+    </header>
+  );
+};
+
+export default MintPage;
