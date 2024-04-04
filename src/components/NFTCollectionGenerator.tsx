@@ -285,7 +285,7 @@ function NFTminting({ secretKey }: MintPageProps) {
               )}
               <div style={{ textAlign: "center" }}>
                 {imageUri && (
-                  <Image
+                  <img
                     src={imageUri}
                     alt="NFT Image"
                     style={{ display: "inline-block" }}
