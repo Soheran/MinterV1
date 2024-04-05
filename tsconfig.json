@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/api/Decrypt.jsx", "src/components/Decryption.tsx", "src/api/python/api.js", "src/components/MintNFT.tsx.backup"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/pages/api/Decrypt.jsrc/pages/components/Decryption.tsxon.tsx", "src/pages/api/pythosrc/pages/components/MintNFT.tsx.backupT.tsx.backup"],
   "exclude": ["node_modules"]
 }

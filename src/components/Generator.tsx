@@ -11,6 +11,11 @@ import {
   getAssociatedTokenAddress,
   getMint,
 } from "@solana/spl-token";
+import {
+  CldUploadWidget,
+  CloudinaryUploadWidgetResults,
+} from "next-cloudinary";
+import { UploadApiResponse } from "cloudinary";
 import { useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
@@ -60,6 +65,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
   const [open, setOpen] = useState(false); // State for the dialog
   // State variable to manage NFT mode
   const [nftMode, setNftMode] = useState(false);
+  const [imageURL, setImageURL] = useState("");
 
   // Function to handle toggling NFT mode
   const toggleNftMode = () => {
@@ -162,6 +168,50 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
       })
       .catch((error) => {
         console.error("Error minting token:", error);
+      });
+  }
+
+  const handleImageUploaded = (result: CloudinaryUploadWidgetResults) => {
+    console.log("image uploaded");
+    setImageURL(result.info.secure_url);
+  };
+
+  function createJSON() {
+    console.log(
+      "name is: ",
+      formData.name,
+      "symbol is: ",
+      formData.symbol,
+      "desc is: ",
+      formData.description,
+      "imageURL is: ",
+      imageURL
+    );
+    const jsonData = {
+      name: formData.name,
+      symbol: formData.symbol,
+      description: formData.description,
+      image: imageURL,
+    };
+
+    fetch("/api/save-json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to save JSON data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("JSON data saved:", data);
+      })
+      .catch((error) => {
+        console.error("Error saving JSON data:", error);
       });
   }
 
@@ -481,30 +531,18 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
                 </label>
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                   <div className="text-center">
-                    <PhotoIcon
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      aria-hidden="true"
-                    />
-                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                      <label
-                        htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-white font-semibold text-red-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-red-600 focus-within:ring-offset-2 hover:text-red-500"
-                      >
-                        <span>Upload a file</span>
-                        <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          className="sr-only"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                        />
-                      </label>
-                      <p className="pl-1">or drag and drop</p>
-                    </div>
-                    <p className="text-xs leading-5 text-gray-600">
-                      PNG, JPG up to 10MB
-                    </p>
+                    <CldUploadWidget
+                      uploadPreset="jmnzgawq"
+                      onSuccess={(result) => handleImageUploaded(result)}
+                    >
+                      {({ open }) => {
+                        return (
+                          <button onClick={() => open()}>
+                            Upload an Image
+                          </button>
+                        );
+                      }}
+                    </CldUploadWidget>
                   </div>
                 </div>
               </div>
@@ -523,6 +561,12 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
               className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               Generate
+            </button>
+            <button
+              onClick={createJSON}
+              className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            >
+              create json
             </button>
           </div>
         </form>

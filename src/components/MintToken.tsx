@@ -31,6 +31,7 @@ export default function MintToken({ secretKey }: MintPageProps) {
 
   const tokenMint = "EZ434K66Bz8UWPGp1Bok9QPeLrqDiqRrBoX727yxg7Vp";
   const tokenMintPublicKey = new PublicKey(tokenMint);
+
   const [mintAmount, setMintAmount] = useState(100);
   const decimals = 0;
   const numberPerToken = 1;
@@ -101,17 +102,17 @@ export default function MintToken({ secretKey }: MintPageProps) {
 
       const transaction = new Transaction().add(mintingInstruction);
 
-      // Convert 1 SOL to lamports
-      const solAmount = 1;
-      const lamports = solAmount * 1000000000; // 1 SOL = 1,000,000,000 lamports
+      // // Convert 1 SOL to lamports
+      // const solAmount = 1;
+      // const lamports = solAmount * 1000000000; // 1 SOL = 1,000,000,000 lamports
 
-      transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: wallet.publicKey,
-          toPubkey: fromWallet.publicKey,
-          lamports,
-        })
-      );
+      // transaction.add(
+      //   SystemProgram.transfer({
+      //     fromPubkey: wallet.publicKey,
+      //     toPubkey: fromWallet.publicKey,
+      //     lamports,
+      //   })
+      // );
 
       const blockHash = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockHash.blockhash;
@@ -132,6 +133,8 @@ export default function MintToken({ secretKey }: MintPageProps) {
       );
 
       console.log("Transaction signature for minting tokens:", signature);
+
+      fetchBalances();
     } catch (error) {
       console.log(error);
     }
@@ -140,36 +143,37 @@ export default function MintToken({ secretKey }: MintPageProps) {
   const [totalSupply, setTotalSupply] = useState(0);
   const [userBalance, setUserBalance] = useState(0);
 
-  useEffect(() => {
-    const fetchBalances = async () => {
-      try {
-        if (!wallet.publicKey || !wallet.signTransaction) {
-          throw new Error("Wallet not connected");
-        }
-
-        // Fetch total supply
-        const mintInfo = await getMint(connection, tokenMintPublicKey);
-        const supplyBigInt = mintInfo.supply;
-        const supplyNumber = Number(supplyBigInt / BigInt(numberPerToken));
-        setTotalSupply(supplyNumber);
-
-        // Fetch user's balance
-        const associatedAccount = await getAssociatedTokenAddress(
-          tokenMintPublicKey,
-          wallet.publicKey
-        );
-        const associatedAccountInfo = await connection.getTokenAccountBalance(
-          associatedAccount
-        );
-        const tokenCountString = associatedAccountInfo.value.amount;
-        const tokenCount = Number(tokenCountString);
-        const tokenNumber = Number(tokenCount / numberPerToken);
-        setUserBalance(tokenNumber);
-      } catch (error) {
-        console.error("Error fetching balances:", error);
+  const fetchBalances = async () => {
+    try {
+      if (!wallet.publicKey || !wallet.signTransaction) {
+        throw new Error("Wallet not connected");
       }
-    };
 
+      // Fetch total supply
+      const mintInfo = await getMint(connection, tokenMintPublicKey);
+      const supplyBigInt = mintInfo.supply;
+      const supplyNumber = Number(supplyBigInt / BigInt(numberPerToken));
+      setTotalSupply(supplyNumber);
+
+      // Fetch user's balance
+      const associatedAccount = await getAssociatedTokenAddress(
+        tokenMintPublicKey,
+        wallet.publicKey
+      );
+      const associatedAccountInfo = await connection.getTokenAccountBalance(
+        associatedAccount
+      );
+      const tokenCountString = associatedAccountInfo.value.amount;
+      const tokenCount = Number(tokenCountString);
+      const tokenNumber = Number(tokenCount / numberPerToken);
+      setUserBalance(tokenNumber);
+      console.log(tokenNumber);
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchBalances();
   }, [connection, wallet, tokenMintPublicKey, numberPerToken]);
 
@@ -183,16 +187,13 @@ export default function MintToken({ secretKey }: MintPageProps) {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Uncle Ringo
+            Fungible Token Minter
           </h2>
           <div className="mt-6 flex flex-col gap-x-8 gap-y-20 lg:flex-row">
             <div className="lg:w-full lg:max-w-2xl lg:flex-auto">
               <p className="text-xl leading-8 text-gray-600">
-                Uncle Ringo has been a household name since 1984 and has
-                organized countless carnivals, fun-fairs, theme parties, product
-                launches, fund-raising charities, school events. We take pride
-                in being Singappore&apos;s longest-standing and leading provider
-                of carnivals and family entertainment.
+                Enter the amount of fungible tokens to create and send to the
+                connected solana wallet!
               </p>
               <div>
                 <input
@@ -203,7 +204,7 @@ export default function MintToken({ secretKey }: MintPageProps) {
                   type="number"
                   value={mintAmount}
                   onChange={handleInputChange}
-                  disabled
+                  required
                 />
                 <button
                   type="button"
@@ -219,13 +220,20 @@ export default function MintToken({ secretKey }: MintPageProps) {
               <dl className="w-64 space-y-8 xl:w-80">
                 <div className="flex flex-col-reverse gap-y-4">
                   <dt className="text-base leading-7 text-gray-600">
-                    Total Supply of Fungible Tokens
+                    Number of tokens in Connected Wallet
+                  </dt>
+                  <dd className="text-5xl font-semibold tracking-tight text-gray-900">
+                    {userBalance} Tokens
+                  </dd>
+
+                  <dt className="text-base leading-7 text-gray-600">
+                    Total Supply
                   </dt>
                   <dd className="text-5xl font-semibold tracking-tight text-gray-900">
                     {totalSupply} Tokens
                   </dd>
                 </div>
-                {stats.map((stat) => (
+                {/* {stats.map((stat) => (
                   <div
                     key={stat.label}
                     className="flex flex-col-reverse gap-y-4"
@@ -237,7 +245,7 @@ export default function MintToken({ secretKey }: MintPageProps) {
                       {stat.value}
                     </dd>
                   </div>
-                ))}
+                ))} */}
               </dl>
             </div>
           </div>
