@@ -173,6 +173,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
 
   const handleImageUploaded = (result: CloudinaryUploadWidgetResults) => {
     console.log("image uploaded");
+    //@ts-ignore
     setImageURL(result.info.secure_url);
   };
 
@@ -194,7 +195,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
       image: imageURL,
     };
 
-    fetch("/api/save-json", {
+    fetch("/api/token/save-json", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -5,9 +5,10 @@ import path from "path";
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const jsonData = req.body; // Assuming JSON data is sent in the request body
+    const name = req.body.name;
 
     // Specify the path where you want to save the JSON file
-    const filePath = path.join(process.cwd(), "jsons", "data.json");
+    const filePath = path.join(process.cwd(), "src/jsons", name + ".json");
 
     // Write JSON data to file
     fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
