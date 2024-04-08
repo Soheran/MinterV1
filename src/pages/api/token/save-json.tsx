@@ -1,20 +1,42 @@
-import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
-import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const jsonData = req.body; // Assuming JSON data is sent in the request body
-    const name = req.body.name;
+    const jsonData = JSON.stringify(req.body); // Convert JSON data to string
+    const name = req.body.name + ".json";
 
-    // Specify the path where you want to save the JSON file
-    const filePath = path.join(process.cwd(), "src/jsons", name + ".json");
+    const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/db9aqguwu/raw/upload`;
+    const formData = new FormData();
+    formData.append(
+      "file",
+      new Blob([jsonData], { type: "application/json" }),
+      "file.json"
+    );
+    formData.append("public_id", name);
+    formData.append("upload_preset", "jmnzgawq");
 
-    // Write JSON data to file
-    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
+    fetch(cloudinaryUploadUrl, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Upload response:", data);
+        res.status(200).json({ message: "Upload response received" });
+      })
+      .catch((error) => {
+        console.error("Error uploading:", error);
+        res
+          .status(500)
+          .json({ message: "Error uploading JSON data to Cloudinary" });
+      });
 
-    res.status(200).json({ message: "JSON data saved successfully!" });
+    // // Specify the path where you want to save the JSON file
+    // const filePath = path.join(process.cwd(), "src/jsons", name + ".json");
+
+    // // Write JSON data to file
+    // fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
   } else {
-    res.status(405).json({ message: "Method Not Allowed" });
+    res.status(400).json({ message: "Error" });
   }
 }
