@@ -37,7 +37,6 @@ import {
   TokenStandard,
   createAndMint,
   mplTokenMetadata,
-  updateV1,
 } from "@metaplex-foundation/mpl-token-metadata";
 import { mplCandyMachine } from "@metaplex-foundation/mpl-candy-machine";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
@@ -66,6 +65,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
   // State variable to manage NFT mode
   const [nftMode, setNftMode] = useState(false);
   const [imageURL, setImageURL] = useState("");
+  const [metadataURL, setMetadataURL] = useState("");
 
   // Function to handle toggling NFT mode
   const toggleNftMode = () => {
@@ -140,35 +140,37 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
     // Register Wallet Adapter to Umi
     .use(walletAdapterIdentity(wallet));
 
-  // Specify metadata for the token
-  const metadata = {
-    name: "aatToken",
-    symbol: "aat",
-    uri: "https://res.cloudinary.com/db9aqguwu/raw/upload/v1711354850/aatToken_kbeit2.json",
-  };
-
   async function TokenGenerator() {
-    // Create and mint the token
-    createAndMint(umi, {
-      wallet,
-      authority: umi.identity,
-      name: metadata.name,
-      symbol: metadata.symbol,
-      sellerFeeBasisPoints: percentAmount(0), // Convert number to percentAmount
-      decimals: 0, // Number of decimal places for the token
-      amount: 100, // Initial supply of the token
-      // @ts-ignore
-      tokenOwner: wallet.publicKey,
-      tokenStandard: TokenStandard.Fungible,
-      uri: metadata.uri,
-    })
-      .sendAndConfirm(umi)
-      .then(() => {
-        console.log(`Successfully minted ${metadata.name}`);
+    if (!wallet.publicKey || !wallet.signTransaction) {
+      throw new WalletNotConnectedError();
+    } else {
+      await createJSON();
+
+      const mint = generateSigner(umi);
+      console.log(
+        "the data before createAndMint runs: ",
+        metadataURL,
+        formData.name,
+        formData.symbol
+      );
+      createAndMint(umi, {
+        mint,
+        authority: umi.identity,
+        name: formData.name,
+        symbol: formData.symbol,
+        uri: metadataURL,
+        sellerFeeBasisPoints: percentAmount(0),
+        decimals: parseInt(formData.decimals),
+        amount: parseInt(formData.supply),
+        // @ts-ignore
+        tokenOwner: wallet.publicKey,
+        tokenStandard: TokenStandard.Fungible,
       })
-      .catch((error) => {
-        console.error("Error minting token:", error);
-      });
+        .sendAndConfirm(umi)
+        .then(() => {
+          console.log("Successfully minted ft (", mint.publicKey, ")");
+        });
+    }
   }
 
   const handleImageUploaded = (result: CloudinaryUploadWidgetResults) => {
@@ -177,7 +179,7 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
     setImageURL(result.info.secure_url);
   };
 
-  function createJSON() {
+  async function createJSON() {
     console.log(
       "name is: ",
       formData.name,
@@ -209,7 +211,8 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
         return response.json();
       })
       .then((data) => {
-        console.log("JSON data saved:", data);
+        console.log("JSON data saved onto cloudinary", data);
+        setMetadataURL(data.result.secure_url);
       })
       .catch((error) => {
         console.error("Error saving JSON data:", error);
@@ -562,12 +565,6 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
               className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               Generate
-            </button>
-            <button
-              onClick={createJSON}
-              className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            >
-              create json
             </button>
           </div>
         </form>

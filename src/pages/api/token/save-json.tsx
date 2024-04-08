@@ -22,7 +22,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Upload response:", data);
-        res.status(200).json({ message: "Upload response received" });
+        res.status(200).json({ result: data });
       })
       .catch((error) => {
         console.error("Error uploading:", error);
