@@ -49,14 +49,15 @@ export default function Decryption() {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
         <div className="px-4 sm:px-0">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Uncle Ringo
+            Aires A.T.
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Uncle Ringo has been a household name since 1984 and has organized
-            countless carnivals, fun-fairs, theme parties, product launches,
-            fund-raising charities, school events. We take pride in being
-            Singapore&apos;s longest-standing and leading provider of carnivals
-            and family entertainment.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nisi
+            eu augue eleifend sagittis. Nam at sollicitudin odio, eu placerat
+            sapien. Vestibulum ante ipsum primis in faucibus orci luctus et
+            ultrices posuere cubilia curae; Integer quis ipsum purus. Aenean et
+            massa bibendum, condimentum neque in, tincidunt odio. Nullam lorem
+            nunc, rhoncus vitae erat et, ullamcorper placerat libero.
           </p>
         </div>
 

@@ -146,12 +146,21 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
     } else {
       await createJSON();
 
+      let tokenstandard = TokenStandard.Fungible;
+      if (nftMode) {
+        tokenstandard = TokenStandard.NonFungible;
+        formData.decimals = "0";
+        formData.supply = "1";
+      }
+
       const mint = generateSigner(umi);
       console.log(
         "the data before createAndMint runs: ",
         metadataURL,
         formData.name,
-        formData.symbol
+        formData.symbol,
+        formData.decimals,
+        formData.supply
       );
       createAndMint(umi, {
         mint,
@@ -164,11 +173,11 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
         amount: parseInt(formData.supply),
         // @ts-ignore
         tokenOwner: wallet.publicKey,
-        tokenStandard: TokenStandard.Fungible,
+        tokenStandard: tokenstandard,
       })
         .sendAndConfirm(umi)
         .then(() => {
-          console.log("Successfully minted ft (", mint.publicKey, ")");
+          console.log("Successfully minted token (", mint.publicKey, ")");
         });
     }
   }
@@ -224,14 +233,15 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
         <div className="px-4 sm:px-0">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Uncle Ringo
+            Aires A.T.
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Uncle Ringo has been a household name since 1984 and has organized
-            countless carnivals, fun-fairs, theme parties, product launches,
-            fund-raising charities, school events. We take pride in being
-            Singapore&apos;s longest-standing and leading provider of carnivals
-            and family entertainment.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac nisi
+            eu augue eleifend sagittis. Nam at sollicitudin odio, eu placerat
+            sapien. Vestibulum ante ipsum primis in faucibus orci luctus et
+            ultrices posuere cubilia curae; Integer quis ipsum purus. Aenean et
+            massa bibendum, condimentum neque in, tincidunt odio. Nullam lorem
+            nunc, rhoncus vitae erat et, ullamcorper placerat libero.
           </p>
         </div>
 
@@ -294,10 +304,11 @@ export default function TokenGenerator({ secretKey }: MintPageProps) {
                     type="number"
                     name="decimals"
                     autoComplete="9"
-                    min="1"
+                    min="0"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
                     value={formData.decimals}
                     onChange={handleChange}
+                    placeholder={nftMode ? "0" : ""}
                     disabled={nftMode}
                   />
                 </div>

@@ -37,7 +37,7 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import { useEffect } from "react";
 
 interface MintPageProps {
   secretKey: string | undefined;
@@ -52,24 +52,20 @@ interface Product {
 }
 
 const product: Product = {
-  name: "Uncle Ringo Collection",
-  price: "$100",
+  name: "Pokemon Collection",
+  price: "$10",
   rating: 5,
   images: [
     {
       id: 1,
       name: "Ringo NFT",
-      src: "https://danamic-media.danamic.org/danamic-production/2022/09/07232108/IMG_4319_Original-3.jpg",
+      src: "https://wallpapers-clan.com/wp-content/uploads/2023/11/cute-pokemon-pikachu-rain-desktop-wallpaper-preview.jpg",
       alt: "Uncle Ringo NFT Collection",
     },
   ],
 
   description: `
-    <p>Uncle Ringo has been a household name since 1984 and has organized
-    countless carnivals, fun-fairs, theme parties, product launches,
-    fund-raising charities, school events. We take pride in being
-    Singapore's longest-standing and leading provider of carnivals and
-    family entertainment.</p>
+    <p>Example pokemon collection for testing purposes. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur auctor dolor vel semper. Donec eleifend diam eget enim lobortis, non auctor dolor tincidunt. Nam euismod, dui a ultrices ullamcorper, sem nisl tincidunt turpis, placerat consequat libero metus ac quam. Mauris vitae sem faucibus, consequat lorem eget, faucibus purus.</p>
   `,
 };
 
@@ -82,17 +78,20 @@ export default function NFTminting({ secretKey }: MintPageProps) {
   // Change this to yours
   const collectionMintAddress =
     process.env.CollectionMintAddress ||
-    "HX2g3DNCJDjX1hWqY8CmDksqGKsNuECn4M1ryZp7RpKZ";
+    "9yjYUJ2rfXcuPadG51vDF5Zvnqzg8g87PCxFG7WK66QC";
   const candyMachineAddress =
     process.env.CandyMachineAddress ||
-    "69N6iWdsSjdsFAxidrEAVAq6G4gZCfpoPDAfcFuchDwb";
+    "HDS6FLM572tzCbgPtf7mgcSwRiH2uDB3yHphGoFDn4Za";
 
   const [isOpen, setIsOpen] = useState(false);
   const [assetData, setAssetData] = useState<DigitalAsset | null>(null);
   const [imageUri, setImageUri] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(true);
-
+  const [countTotal, setCountTotal] = useState<number>(0);
+  const [countRemaining, setCountRemaining] = useState<number>(0);
+  const [countMinted, setCountMinted] = useState<number>(0);
+  const [mintDisabled, setMintDisabled] = useState<boolean>(true);
   // Import your private key file and parse it.
   const { connection } = useConnection();
   const wallet = useWallet();
@@ -289,6 +288,35 @@ export default function NFTminting({ secretKey }: MintPageProps) {
         console.error("Error fetching metadata:", error);
       });
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let candyMachineAddr = publicKey(candyMachineAddress);
+      const candyMachine = await fetchCandyMachine(umi, candyMachineAddr);
+      const candyGuard = await fetchCandyGuard(umi, candyMachine.mintAuthority);
+
+      const total = candyMachine.itemsLoaded;
+      const minted = Number(candyMachine.itemsRedeemed);
+      const remaining = total - minted;
+
+      setCountTotal(total);
+      setCountMinted(minted);
+      setCountRemaining(remaining);
+    };
+
+    fetchData();
+  }, []);
+
+  // Determine color based on countRemaining
+  let colorClass = "";
+  if (countRemaining === 0) {
+    colorClass = "bg-red-600";
+  } else if (countRemaining < countTotal / 2) {
+    colorClass = "bg-yellow-500";
+  } else {
+    colorClass = "bg-green-600";
+  }
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -352,8 +380,8 @@ export default function NFTminting({ secretKey }: MintPageProps) {
               />
             </div>
 
-            <div className="mt-6">
-              <div className="mt-10 flex">
+            <div className="mt-6 flex flex-wrap justify-between">
+              <div className="mt-10 flex flex-1 px-4">
                 <button
                   type="submit"
                   className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
@@ -444,6 +472,13 @@ export default function NFTminting({ secretKey }: MintPageProps) {
                     </div>
                   </Dialog>
                 </Transition.Root>
+              </div>
+              <div
+                className={`mt-10 flex flex-1 items-center justify-center rounded-md border border-transparent ${colorClass} px-8 py-3 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full`}
+              >
+                <p>
+                  {countRemaining}/{countTotal}
+                </p>
               </div>
             </div>
           </div>
